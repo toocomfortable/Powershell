@@ -1,0 +1,19 @@
+$exclusions = @("anma","sccmadmin","doiadmin","desktopadmin") 
+foreach ($Comp in (Get-Content 'C:\scripts\csv\Hosts_.csv')) 
+{
+    foreach ($UserFolder in (Get-ChildItem "\\$Comp\c$\Users" -Exclude $exclusions)) {
+
+        $DocumentsFolder = Join-Path ($UserFolder.FullName) 'Documents'
+        $DesktopFolder = Join-Path ($UserFolder.FullName) 'Desktop'
+
+        $DocumentsSize = (Get-ChildItem $DocumentsFolder -Recurse | Measure-Object -property length -sum -ErrorAction SilentlyContinue)
+        $DesktopSize = (Get-ChildItem $DesktopFolder -Recurse | Measure-Object -property length -sum -ErrorAction SilentlyContinue)
+
+        $DocumentOutput = "$Comp $UserFolder Documents {0:N1}" -f ($DocumentsSize.sum / 1GB) + "GB"
+        $DesktopOutput = "$Comp $UserFolder Desktop {0:N1}" -f ($DesktopSize.sum / 1GB) + "GB"
+
+        $DocumentOutput | Out-File c:\scripts\documentResults_T.txt -Append
+        $DesktopOutput | out-file c:\scripts\desktopResults_T.txt -Append
+
+    }
+}
