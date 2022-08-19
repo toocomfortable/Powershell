@@ -1,0 +1,23 @@
+Set-ExecutionPolicy RemoteSigned -Force
+
+$userid = [System.Environment]::GetEnvironmentVariable('USERNAME')
+if ($userid.Length -lt 5)
+    {
+    $userid = $userid.substring(0,($userid.Length))
+    }
+else
+    {
+     $userid = $userid.substring(0,5)
+     }
+#Write-Host $userid
+
+set-Content C:\user_ID $userid
+
+if ($userid -eq "nma")
+    { 
+    Set-Content c:\userid bg045
+    }
+elseif ($userid -eq "student2") 
+    { 
+    Set-Content c:\userid an00
+     }
