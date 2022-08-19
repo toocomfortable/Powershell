@@ -1,0 +1,67 @@
+Get Last logondate of computers from .csv
+import-csv C:\scripts\McAfee\computers.csv | % { Get-ADComputer -identity $_.comp -Properties * | select
+lastlogondate, name | Export-Csv c:\scripts\mcafee\comp.csv -append}
+
+Create Security Group in specific OUnew-adgroup -name "OIGNYPDR15_10" -groupscope global -path "OU=oignypd,DC=doi,dc=NYCNET"
+
+Add members to security group:$$
+Add-ADGROUPmember -identity " " -members $_.ntlogin
+
+Check .net framework is installed or not.
+Get-ChildItem "HKLM:SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\" | Get-ItemPropertyValue -Name Release | ForEach-Object { $_ -ge 394802 }
+
+Check if computer is pingable and write output 
+$computers = import-csv C:\scripts\McAfee\Unmanaged_Systems.csv
+foreach ($item in $Computers){
+$computername = $item.comp
+$testConnection = Test-Connection $computername -count 1
+
+If ($testconnection -ne $null){
+    Write-output "$computername found" | Out-File C:\scripts\mcafee\pingresults.txt -Append
+}
+Else{
+    Write-output "$computername not found." | Out-File C:\scripts\mcafee\pingresults.txt -Append
+}}
+Get group members
+Get-ADGroupMember -Identity "InvestigationDivision" | select name | export-csv -path C:\scripts\csv\InvestigationDivisions.csv
+
+Trust/domain relationship
+invoke-command -computername $computer -scriptblock {reset-computermachinepassword}
+
+From <https://www.reddit.com/r/sysadmin/comments/a8f02m/windows_admins_learn_powershell/> 
+
+Rename adobject
+set-ADObject -identity "CN=Barry Tong HHC,OU=SCA,DC=DOI,DC=NYCNET" -displayname "Barry Tong HHC" 
+set-ADObject -identity "CN=Barry Tong HHC,OU=SCA,DC=DOI,DC=NYCNET" -displayname "Barry Tong HHC"  
+
+Log useroff:
+quser /server:doimailcas01
+
+logoff $sessionID 4 /SERVER:doimailcas01
+
+
+
+Get logged on user of remote computer
+
+(gwmi -class win32_computerSystem -computer "RemoteComputerName").username
+
+From <https://social.technet.microsoft.com/Forums/windowsserver/en-US/b73dabd6-c418-492f-b855-1bff6c72b410/query-username-of-person-logged-into-a-remote-computer?forum=winserverpowershell> 
+
+
+Powershell Get-content
+
+get-content .\database_2020_12_24-1.log -tail 4 -wait 
+
+Check restart/shutdown on event viewer based on eventID:
+
+Get-EventLog -LogName System |? {$_.EventID -in (6005,6006,6008,6009,1074,1076)} | ft TimeGenerated,EventId,Mess
+age -AutoSize -wrap
+
+Add DNS Record and Sync rep changes
+
+Add-DnsServerResourceRecordA -Name "DOIPROOFPOINT04" -ZoneName "DOI.NYCNET" -AllowUpdateAny -IPv4Address "192.168.206.116" -TimeToLive 01:00:00
+
+repadmin /syncall /d /e /a
+
+
+Add-DnsServerResourceRecordA -Name "HAPROX01" -ZoneName "DOI.NYCNET" -AllowUpdateAny -IPv4Address "192.168.206.239" -TimeToLive 01:00:00
