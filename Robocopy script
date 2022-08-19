@@ -1,0 +1,29 @@
+import-csv c:\scripts\FRD\HRFRD.csv | % {
+    $comp = $_.comp
+    $sam = $_.sam
+
+$filename = "\\doi.nycnet\doi\Share2\ITU\RobocopyLogs\HR_Robocopylog$(get-date -format 'yyyy-MM-dd')"
+$source = "\\$comp\c$\users\$sam" 
+$destination = "\\doi.nycnet\redirectedfolders\UPD\$sam"
+
+
+#desktop
+robocopy $source\desktop $destination\Desktop /E /MIR /R:1 /W:1 /log+:"$($filename)" 
+# /xj excludes junction points. infinitely-nested directories.  Documents
+robocopy $source\documents $destination\Documents /E /MIR /xj /R:1 /W:1 /log+:"$($filename)" 
+#downloads
+robocopy $source\Downloads $destination\Downloads  /E /MIR /R:1 /W:1 /log+:"$($filename)" 
+#Favorite
+robocopy $source\Favorites $destination\Favorites /E /MIR /R:1 /W:1 /log+:"$($filename)" 
+#Links
+robocopy $source\Links $destination\Links /E /MIR /R:1 /W:1 /log+:"$($filename)" 
+#Music
+robocopy $source\Music $destination\Music /E /MIR /R:1 /W:1 /log+:"$($filename)" 
+#Pictures
+robocopy $source\Pictures $destination\Pictures /E /MIR /R:1 /W:1 /log+:"$($filename)" 
+#videos /xj excludes junction points. infinitely-nested directories. Videos
+robocopy $source\Videos $destination\Videos /E /xj /MIR /R:1 /W:1 /log+:"$($filename)" 
+
+Write-host Copying $source to $destination
+
+}
