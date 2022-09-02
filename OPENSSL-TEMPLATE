@@ -1,0 +1,22 @@
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+prompt = no
+
+[req_distinguished_name]
+C = US
+ST = New York
+L = New York
+O = DANY
+OU = NWS
+emailAddress = NWS@dany.nyc.gov
+CN = DEV-SITE02.DANY.NYCNET
+
+[v3_req]
+keyUsage = digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = DEV-SITE02
+DNS.2 = DEV-SITE02.DANY.NYCNET
